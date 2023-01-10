@@ -150,39 +150,27 @@ fn main() {
         println!("\nProblem opening the dictionary file (is \"wordlist.txt\" in the current directory?)");
     } else {
         // main_loop(&dict);
-
-        // WORKING WITH V222
-        // let s = String::new();
-        // run(&s, &dict);
-
-        run(&String::new());
+        run(&mut String::new(), &dict, &mut 0, &mut 0);
     }
 }
 
-fn run(target: &String) {
-    for a in 97..103 {
-        if !target.contains(char::from(a)) {
-            let next = target.clone() + char::from(a).to_string().as_str();
-            if next.len() == 3 {
-                println!("{}", next);
+fn run(target: &mut String, dict: &Vec<String>, max_pangrams: &mut i32, max_words: &mut i32) {
+    for a in 'a'..='z' {
+        if !target.contains(a) {
+            target.push(a);
+            if target.len() == 7 {
+                let (solution, pangrams) = solution(dict, &target);
+                if pangrams > *max_pangrams {
+                    println!("Max Pangrams: {} {} {}", target, solution.len(), pangrams);
+                    *max_pangrams = pangrams;
+                } else if solution.len() > *max_words as usize {
+                    println!("Max Words: {} {} {}", target, solution.len(), pangrams);
+                    *max_words = solution.len() as i32;
+                }
             } else {
-                run(&next);
+                run(target, dict, max_pangrams, max_words);
             }
+            target.pop();
         }
     }
 } 
-
-
-// WORKING WITH SOLUTION V222
-// fn run(target: &String, dict: &Vec<String>) {
-//     for a in 97..123 {
-//         if !target.contains(char::from(a)) {
-//             let next = target.clone() + char::from(a).to_string().as_str();
-//             if next.len() == 7 {
-//                 print_solution(solution(dict, &next), &next);
-//             } else if next.len() < 7 {
-//                 run(&next, dict);
-//             }
-//         }
-//     }
-// }
