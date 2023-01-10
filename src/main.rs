@@ -78,30 +78,60 @@ fn is_pangram(word: &String, target: &String) -> bool {
 }
 
 
-/// Print all the words in the dictionary
+/// Return all the words in the dictionary
 /// which can be created with the target string
-fn find_words(dict: &Vec<String>, target: &String) {
-    // Counters
-    let mut pangrams = 0;
-    let mut words = 0;
+/// as well as a pangram count
+fn solution<'a>(dict: &'a Vec<String>, target: &String) -> Vec<&'a String> {
 
-    let center = target.chars().nth(0).unwrap();
+    // We need to use lifetimes in the signature because we are returning
+    // a Vector of references to the Strings in the borrowed dict Vector
 
+    let center_letter = target.chars().nth(0).unwrap();
+    let mut solution: Vec<&String> = Vec::new();
+
+    // Everything is a reference here,
+    // including the words pushed onto the solution Vector
+    // as well as the returned Vector itself
     for word in dict {
-        if word.len() > 3 && word.contains(center) {
-            if is_valid_word(&word, &target) {
-                words += 1;
-                if is_pangram(&word, &target) {
-                    println!("{}", format!("{word}").yellow().bold());
-                    pangrams += 1;
-                } else {
-                    println!("{}", format!("{word}"));
-                }
+        if word.len() > 3 && word.contains(center_letter) {
+            if is_valid_word(word, target) {
+                solution.push(word);
             }
         }
     }
 
-    println!("\nWords: {} Pangrams: {}", words, pangrams);
+    solution
+}
+
+
+/// Pretty print the solution with pangrams in yellow
+/// and some statistics
+fn print_solution(words: &Vec<&String>, target: &String) {
+    let mut pangrams = 0;
+    println!("");
+    for word in words {
+        if is_pangram(&word, &target) {
+            pangrams += 1;
+            print!("{}", format!("{word} ").bright_yellow().bold());
+        } else {
+            print!("{}", format!("{word} "));
+        }
+    }
+
+    println!("\n\nWords: {} Pangrams: {}", words.len(), pangrams);
+}
+
+
+/// Main interactive loop for entering letters and printing the solution
+fn main_loop(dict: &Vec<String>) {
+    loop {
+        // Get 7-letter target string from the user
+        // Center letter should be the first element in the string
+        let target = get_target_letters();
+
+        let solution = solution(&dict, &target);
+        print_solution(&solution, &target);
+    }
 }
 
 
@@ -113,15 +143,10 @@ fn main() {
         Err(_) => Vec::<String>::new()
     };
 
+    // Only run if the dictionary has been read properly
     if dict.is_empty() {
         println!("\nProblem opening the dictionary file (is \"wordlist.txt\" in the current directory?)");
     } else {
-        loop {
-            // Get 7-letter target string from the user
-            // Center letter should be the first element in the string
-            let target = get_target_letters();
-    
-            find_words(&dict, &target);
-        }
+        main_loop(&dict);
     }
 }
