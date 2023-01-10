@@ -79,14 +79,18 @@ fn is_pangram(word: &String, target: &String) -> bool {
 
 
 fn main() {
-    let dict_result = file_to_vector("./wordlist.txt".to_string());
-    let dict = match dict_result {
+    // Read the word dictionary from the file
+    let dict = match file_to_vector("./wordlist.txt".to_string()) {
         Ok(dict) => dict,
         Err(why) => panic!("Problem opening the dictionary file (is \"wordlist.txt\" in the current directory?) {:?}", why),
     };
 
+    // Get 7-letter target string from the user
+    // Center letter should be the first element in the string
     let target = get_target_letters();
     let center = target.chars().nth(0).unwrap();
+
+    // Counters
     let mut pangrams = 0;
     let mut words = 0;
 
