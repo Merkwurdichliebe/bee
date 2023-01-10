@@ -9,6 +9,7 @@ use std::io::BufReader; // for reading file
 use std::io::BufRead;   // for reading file
 use colored::*;         // for colored terminal output
 use std::io::Result;    // for optional Result
+use chrono::prelude::*; // for printing current time
 
 
 /// Read a file into an optional Vector of individual lines
@@ -131,6 +132,10 @@ fn main_loop(dict: &Vec<String>) {
         // Center letter should be the first element in the string
         let target = get_target_letters();
 
+        if target == "maximum" {
+            run(&mut String::new(), &dict, &mut 0, &mut 0);
+        }
+
         let solution = solution(dict, &target);
         print_solution(solution, &target);
     }
@@ -149,8 +154,7 @@ fn main() {
     if dict.is_empty() {
         println!("\nProblem opening the dictionary file (is \"wordlist.txt\" in the current directory?)");
     } else {
-        // main_loop(&dict);
-        run(&mut String::new(), &dict, &mut 0, &mut 0);
+        main_loop(&dict);
     }
 }
 
@@ -161,10 +165,10 @@ fn run(target: &mut String, dict: &Vec<String>, max_pangrams: &mut i32, max_word
             if target.len() == 7 {
                 let (solution, pangrams) = solution(dict, &target);
                 if pangrams > *max_pangrams {
-                    println!("Max Pangrams: {} {} {}", target, solution.len(), pangrams);
+                    println!("{} -- Pangrams: {} {:>3} {:>3}", Local::now(), target, solution.len(), pangrams);
                     *max_pangrams = pangrams;
                 } else if solution.len() > *max_words as usize {
-                    println!("Max Words: {} {} {}", target, solution.len(), pangrams);
+                    println!("{} -- Words:    {} {:>3} {:>3}", Local::now(), target, solution.len(), pangrams);
                     *max_words = solution.len() as i32;
                 }
             } else {
