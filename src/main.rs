@@ -80,13 +80,14 @@ fn is_pangram(word: &String, target: &String) -> bool {
 
 /// Return a Vector containing references to all the words in the dictionary
 /// which can be created with the target string
-fn solution<'a>(dict: &'a Vec<String>, target: &String) -> Vec<&'a String> {
+fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32) {
 
     // We need to use lifetimes in the signature because we are returning
     // a Vector of references to the Strings in the borrowed dict Vector
 
     let center_letter = target.chars().nth(0).unwrap();
     let mut solution: Vec<&String> = Vec::new();
+    let mut pangrams = 0;
 
     // Everything is a reference here,
     // including the words pushed onto the solution Vector
@@ -95,22 +96,24 @@ fn solution<'a>(dict: &'a Vec<String>, target: &String) -> Vec<&'a String> {
         if word.len() > 3 && word.contains(center_letter) {
             if is_valid_word(word, target) {
                 solution.push(word);
+                if is_pangram(word, target) {
+                    pangrams += 1;
+                }
             }
         }
     }
 
-    solution
+    (solution, pangrams)
 }
 
 
 /// Pretty print the solution with pangrams in yellow
 /// and some statistics
-fn print_solution(words: &Vec<&String>, target: &String) {
-    let mut pangrams = 0;
+fn print_solution(solution: (Vec<&String>, i32), target: &String) {
+    let (words, pangrams) = solution;
     println!("");
-    for word in words {
+    for word in &words {
         if is_pangram(&word, &target) {
-            pangrams += 1;
             print!("{}", format!("{word} ").bright_yellow().bold());
         } else {
             print!("{}", format!("{word} "));
@@ -128,8 +131,8 @@ fn main_loop(dict: &Vec<String>) {
         // Center letter should be the first element in the string
         let target = get_target_letters();
 
-        let solution = solution(&dict, &target);
-        print_solution(&solution, &target);
+        let solution = solution(dict, &target);
+        print_solution(solution, &target);
     }
 }
 
@@ -146,6 +149,40 @@ fn main() {
     if dict.is_empty() {
         println!("\nProblem opening the dictionary file (is \"wordlist.txt\" in the current directory?)");
     } else {
-        main_loop(&dict);
+        // main_loop(&dict);
+
+        // WORKING WITH V222
+        // let s = String::new();
+        // run(&s, &dict);
+
+        run(&String::new());
     }
 }
+
+fn run(target: &String) {
+    for a in 97..103 {
+        if !target.contains(char::from(a)) {
+            let next = target.clone() + char::from(a).to_string().as_str();
+            if next.len() == 3 {
+                println!("{}", next);
+            } else {
+                run(&next);
+            }
+        }
+    }
+} 
+
+
+// WORKING WITH SOLUTION V222
+// fn run(target: &String, dict: &Vec<String>) {
+//     for a in 97..123 {
+//         if !target.contains(char::from(a)) {
+//             let next = target.clone() + char::from(a).to_string().as_str();
+//             if next.len() == 7 {
+//                 print_solution(solution(dict, &next), &next);
+//             } else if next.len() < 7 {
+//                 run(&next, dict);
+//             }
+//         }
+//     }
+// }
