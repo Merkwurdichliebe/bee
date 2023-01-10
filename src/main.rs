@@ -47,7 +47,7 @@ fn get_target_letters() -> String {
 
 /// Return true if the word only contains characters
 /// which are part of the target string
-fn is_valid_word(word: &str, target: &str) -> bool {
+fn is_valid_word(word: &String, target: &String) -> bool {
     let mut valid = true;
     for char in word.chars() {
         if !target.contains(char) {
@@ -78,21 +78,12 @@ fn is_pangram(word: &String, target: &String) -> bool {
 }
 
 
-fn main() {
-    // Read the word dictionary from the file
-    let dict = match file_to_vector("./wordlist.txt".to_string()) {
-        Ok(dict) => dict,
-        Err(why) => panic!("Problem opening the dictionary file (is \"wordlist.txt\" in the current directory?) {:?}", why),
-    };
-
-    // Get 7-letter target string from the user
-    // Center letter should be the first element in the string
-    let target = get_target_letters();
-    let center = target.chars().nth(0).unwrap();
-
+fn find_words(dict: &Vec<String>, target: &String) {
     // Counters
     let mut pangrams = 0;
     let mut words = 0;
+
+    let center = target.chars().nth(0).unwrap();
 
     for word in dict {
         if word.len() > 3 && word.contains(center) {
@@ -109,4 +100,21 @@ fn main() {
     }
 
     println!("\nWords: {} Pangrams: {}", words, pangrams);
+}
+
+
+fn main() {
+    // Read the word dictionary from the file
+    let dict = match file_to_vector("./wordlist.txt".to_string()) {
+        Ok(dict) => dict,
+        Err(why) => panic!("Problem opening the dictionary file (is \"wordlist.txt\" in the current directory?) {:?}", why),
+    };
+
+    loop {
+        // Get 7-letter target string from the user
+        // Center letter should be the first element in the string
+        let target = get_target_letters();
+
+        find_words(&dict, &target);
+    }
 }
