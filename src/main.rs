@@ -81,7 +81,7 @@ fn is_pangram(word: &String, target: &String) -> bool {
 
 /// Return a Vector containing references to all the words in the dictionary
 /// which can be created with the target string
-fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32) {
+fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32, i32) {
 
     // We need to use lifetimes in the signature because we are returning
     // a Vector of references to the Strings in the borrowed dict Vector
@@ -89,6 +89,7 @@ fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32
     let center_letter = target.chars().nth(0).unwrap();
     let mut solution: Vec<&String> = Vec::new();
     let mut pangrams = 0;
+    let mut score = 0;
 
     // Everything is a reference here,
     // including the words pushed onto the solution Vector
@@ -97,52 +98,66 @@ fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32
         if word.len() > 3 && word.contains(center_letter) {
             if is_valid_word(word, target) {
                 solution.push(word);
+                if word.len() == 4 {
+                    score += 1;
+                } else {
+                    score += word.len() as i32;
+                }
                 if is_pangram(word, target) {
                     pangrams += 1;
+                    score += 7;
                 }
             }
         }
     }
 
-    (solution, pangrams)
+    (solution, pangrams, score)
 }
 
 
 /// Pretty print the solution with pangrams in yellow
 /// and some statistics
-fn print_solution(solution: (Vec<&String>, i32), target: &String) {
-    let (words, pangrams) = solution;
+fn print_solution(solution: (Vec<&String>, i32, i32), target: &String) {
+    let (words, pangrams, score) = solution;
     println!("");
     for word in &words {
         if is_pangram(&word, &target) {
-            print!("{}", format!("{word} ").bright_yellow().bold());
+            print!("{}", format!("{word} ").red().bold());
         } else {
             print!("{}", format!("{word} "));
         }
     }
 
-    println!("\n\nWords: {} Pangrams: {}", words.len(), pangrams);
+    println!("\n\nWords: {} Score: {} Pangrams: {}", words.len(), score, pangrams);
 }
 
 
 /// Recursive function that prints the maximum word count and pangram value
 /// for all valid letter combinations.
 /// Runs when the user inputs 'maximum'.
-fn run(target: &mut String, dict: &Vec<String>, max_pangrams: &mut i32, max_words: &mut i32) {
+fn run(target: &mut String, dict: &Vec<String>, max_pangrams: &mut i32, max_words: &mut i32, max_score: &mut i32) {
     for a in 'a'..='z' {
+        if target.len() == 2 {
+            println!("Processing: {}{}{}....", target.chars().nth(0).unwrap(), target.chars().nth(1).unwrap(), a);
+        }
         if !target.contains(a) {
             target.push(a);
             if target.len() == 7 {
-                let (solution, pangrams) = solution(dict, &target);
+                let (solution, pangrams, score) = solution(dict, &target);
                 if pangrams > *max_pangrams {
-                    println!("{} -- Pangrams: {} {:>3} {:>3}", Local::now(), target, solution.len(), pangrams);
+                    println!("{} -- Pangrams: {} {:>5} {:>5} {:>3}", Local::now(), target, solution.len(), score, pangrams);
                     *max_pangrams = pangrams;
-                } else if solution.len() > *max_words as usize {
-                    println!("{} -- Words:    {} {:>3} {:>3}", Local::now(), target, solution.len(), pangrams);
+                }
+                if solution.len() > *max_words as usize {
+                    println!("{} -- Words:    {} {:>5} {:>5} {:>3}", Local::now(), target, solution.len(), score, pangrams);
                     *max_words = solution.len() as i32;
                 }
+                if score > *max_score {
+                    println!("{} -- Score:    {} {:>5} {:>5} {:>3}", Local::now(), target, solution.len(), score, pangrams);
+                    *max_score = score;
+                }
             } else {
-                run(target, dict, max_pangrams, max_words);
+                run(target, dict, max_pangrams, max_words, max_score);
             }
             target.pop();
         }
@@ -158,7 +173,7 @@ fn main_loop(dict: &Vec<String>) {
         let target = get_target_letters();
 
         if target == "maximum" {
-            run(&mut String::new(), &dict, &mut 0, &mut 0);
+            run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0);
         }
 
         let solution = solution(dict, &target);
