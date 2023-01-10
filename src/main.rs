@@ -78,9 +78,8 @@ fn is_pangram(word: &String, target: &String) -> bool {
 }
 
 
-/// Return all the words in the dictionary
+/// Return a Vector containing references to all the words in the dictionary
 /// which can be created with the target string
-/// as well as a pangram count
 fn solution<'a>(dict: &'a Vec<String>, target: &String) -> Vec<&'a String> {
 
     // We need to use lifetimes in the signature because we are returning
