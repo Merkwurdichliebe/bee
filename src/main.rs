@@ -107,14 +107,19 @@ fn main() {
     // Read the word dictionary from the file
     let dict = match file_to_vector("./wordlist.txt".to_string()) {
         Ok(dict) => dict,
-        Err(why) => panic!("Problem opening the dictionary file (is \"wordlist.txt\" in the current directory?) {:?}", why),
+        // Err(why) => panic!("Problem opening the dictionary file (is \"wordlist.txt\" in the current directory?) {:?}", why),
+        Err(_) => Vec::<String>::new()
     };
 
-    loop {
-        // Get 7-letter target string from the user
-        // Center letter should be the first element in the string
-        let target = get_target_letters();
-
-        find_words(&dict, &target);
+    if dict.is_empty() {
+        println!("\nProblem opening the dictionary file (is \"wordlist.txt\" in the current directory?)");
+    } else {
+        loop {
+            // Get 7-letter target string from the user
+            // Center letter should be the first element in the string
+            let target = get_target_letters();
+    
+            find_words(&dict, &target);
+        }
     }
 }
