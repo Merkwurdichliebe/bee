@@ -78,6 +78,8 @@ fn is_pangram(word: &String, target: &String) -> bool {
 }
 
 
+/// Print all the words in the dictionary
+/// which can be created with the target string
 fn find_words(dict: &Vec<String>, target: &String) {
     // Counters
     let mut pangrams = 0;
