@@ -125,6 +125,31 @@ fn print_solution(solution: (Vec<&String>, i32), target: &String) {
 }
 
 
+/// Recursive function that prints the maximum word count and pangram value
+/// for all valid letter combinations.
+/// Runs when the user inputs 'maximum'.
+fn run(target: &mut String, dict: &Vec<String>, max_pangrams: &mut i32, max_words: &mut i32) {
+    for a in 'a'..='z' {
+        if !target.contains(a) {
+            target.push(a);
+            if target.len() == 7 {
+                let (solution, pangrams) = solution(dict, &target);
+                if pangrams > *max_pangrams {
+                    println!("{} -- Pangrams: {} {:>3} {:>3}", Local::now(), target, solution.len(), pangrams);
+                    *max_pangrams = pangrams;
+                } else if solution.len() > *max_words as usize {
+                    println!("{} -- Words:    {} {:>3} {:>3}", Local::now(), target, solution.len(), pangrams);
+                    *max_words = solution.len() as i32;
+                }
+            } else {
+                run(target, dict, max_pangrams, max_words);
+            }
+            target.pop();
+        }
+    }
+}
+
+
 /// Main interactive loop for entering letters and printing the solution
 fn main_loop(dict: &Vec<String>) {
     loop {
@@ -157,24 +182,3 @@ fn main() {
         main_loop(&dict);
     }
 }
-
-fn run(target: &mut String, dict: &Vec<String>, max_pangrams: &mut i32, max_words: &mut i32) {
-    for a in 'a'..='z' {
-        if !target.contains(a) {
-            target.push(a);
-            if target.len() == 7 {
-                let (solution, pangrams) = solution(dict, &target);
-                if pangrams > *max_pangrams {
-                    println!("{} -- Pangrams: {} {:>3} {:>3}", Local::now(), target, solution.len(), pangrams);
-                    *max_pangrams = pangrams;
-                } else if solution.len() > *max_words as usize {
-                    println!("{} -- Words:    {} {:>3} {:>3}", Local::now(), target, solution.len(), pangrams);
-                    *max_words = solution.len() as i32;
-                }
-            } else {
-                run(target, dict, max_pangrams, max_words);
-            }
-            target.pop();
-        }
-    }
-} 
