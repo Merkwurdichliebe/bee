@@ -7,7 +7,7 @@ Enter a 7-letter sequence to display all possible words and pangrams.
 
 ## Finding maximum values
 
-Enter 'maximum' to recursively find (rather slowly) the largest values for words and pangrams.
+Enter 'maximum' to recursively find (rather slowly) the largest values for words, pangrams, score and ratio of pangrams to number of words.
 
 There are 3,315,312,000 possible letter permutations.
 
