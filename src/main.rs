@@ -180,7 +180,7 @@ fn run(
                 // Get the solution for the string
                 let (solution, pangrams, score) = solution(dict, &target);
                 let words = solution.len() as i32;
-                let ratio = if words > 0 { pangrams * 100 / words} else { 0 };
+                let ratio = if words > 0 { pangrams * 100 / words } else { 0 };
 
                 // Print new maximums if it is the case
                 if pangrams > *max_pangrams {
