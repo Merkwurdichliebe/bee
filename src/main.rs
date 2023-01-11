@@ -47,12 +47,19 @@ fn get_target_letters() -> String {
 }
 
 
-/// Return true if the word only contains characters
-/// which are part of the target string
+/// Return true if the dictionary word is:
+/// - 4 or more characters
+/// - Composed only of letters present in the target string
+/// - Contains the central letter (first character in the string)
 fn is_valid_word(word: &String, target: &String) -> bool {
+
+    if word.len() < 4 { return false }
+
     let mut valid = true;
+    let center_letter = target.chars().nth(0).unwrap();
+
     for char in word.chars() {
-        if !target.contains(char) {
+        if !target.contains(char) || !word.contains(center_letter) {
             valid = false;
             break;
         }
@@ -88,7 +95,7 @@ fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32
     // a Vector of references to the Strings in the borrowed dict Vector
 
     // The center letter is the first character of the string
-    let center_letter = target.chars().nth(0).unwrap();
+    // let center_letter = target.chars().nth(0).unwrap();
     let mut solution: Vec<&String> = Vec::new();
     let mut pangrams = 0;
     let mut score = 0;
@@ -97,22 +104,20 @@ fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32
     // including the words pushed onto the solution Vector
     // as well as the returned Vector itself
     for word in dict {
-        if word.len() > 3 && word.contains(center_letter) {
-            if is_valid_word(word, target) {
-                solution.push(word);
+        if is_valid_word(word, target) {
+            solution.push(word);
 
-                // We apply the standard NYT scoring here...
-                if word.len() == 4 {
-                    score += 1;
-                } else {
-                    score += word.len() as i32;
-                }
+            // We apply the standard NYT scoring here...
+            if word.len() == 4 {
+                score += 1;
+            } else {
+                score += word.len() as i32;
+            }
 
-                // ...including bonus pangrams score
-                if is_pangram(word, target) {
-                    pangrams += 1;
-                    score += 7;
-                }
+            // ...including bonus pangrams score
+            if is_pangram(word, target) {
+                pangrams += 1;
+                score += 7;
             }
         }
     }
