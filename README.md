@@ -7,13 +7,13 @@ Only after finishing this brute-force approach did I stumble into [this](http://
 
 ## Usage
 
-At the prompt, enter a 7-letter sequence (e.g. `aeinrst`) to display all possible words and pangrams, with the first character (`a` in this example) being the center letter of the puzzle.
+At the prompt, enter a 7-letter sequence (e.g. `aeinrst` or `raegint`) to display all possible words and pangrams, with the first character (`a` or `r` in this example) being the center letter of the puzzle.
 
 ## Finding maximum values
 
 Instead of a 7-letter string, type `maximum` to find the letter combination with gives the maximum values for words, pangrams, score and ratio of pangrams to number of words.
 
-The code uses a recursive function to check all 3,315,312,000 possible letter permutations. With the Wordnik dictionary, the process (single-threaded) takes approximately 2.5 hours to complete on a 4GHz i7 iMac.
+The code uses a recursive function to check all 3,315,312,000 possible letter permutations. With the Wordnik dictionary, the process (single-threaded) takes approximately 2.5 hours to complete on a 4GHz i7 iMac (40 minutes if words containing the letter `s` are excluded from the dictionary).
 
 ## Required English dictionary
 

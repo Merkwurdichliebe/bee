@@ -22,7 +22,11 @@ fn file_to_vector(filename: String) -> Result<Vec<String>> {
     // Filter unnecessary 3-letter words
     let length = dict.len();
     dict.retain(|w| w.len() > 3);
-    println!("\nLoaded dictionary with {} words. Removed 3-letter words -> down to {} words.", length, dict.len());
+
+    // Uncomment the next line to exclude words containing the letter S
+    // dict.retain(|w| !w.contains('s'));
+
+    println!("\nLoaded dictionary with {} words, filtered down to {} words.", length, dict.len());
 
     Ok(dict)
 }
@@ -59,8 +63,6 @@ fn get_target_letters() -> String {
 /// - Composed only of letters present in the target string
 /// - Contains the central letter (first character in the string)
 fn is_valid_word(word: &String, target: &String) -> bool {
-
-    if word.len() < 4 { return false }
 
     let mut valid = true;
     let center_letter = target.chars().nth(0).unwrap();
