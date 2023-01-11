@@ -2,13 +2,14 @@
 //! By Tal Zana January 2023  
 
 
+use std::env;           // for command-line arguments
 use std::fs;            // for file access
 use std::io;            // for user input
 use std::io::Write;     // for flushing print statement
 use std::io::BufReader; // for reading file
 use std::io::BufRead;   // for reading file
+use std::io::Result;    // for reading line Result
 use colored::*;         // for colored terminal output
-use std::io::Result;    // for optional Result
 use chrono::prelude::*; // for printing current time
 
 
@@ -238,12 +239,22 @@ fn main() {
         Err(_) => Vec::<String>::new()
     };
 
-    // Only run if the dictionary has been read properly
+    // Get command-line arguments
+    let args: Vec<String> = env::args().collect();
+
+    // Only run if the dictionary has been read properly,
+    // then check for command-line arguments
     if dict.is_empty() {
         println!("\nProblem opening the dictionary file (is \"wordlist.txt\" in the current directory?)");
     } else {
-        // Uncomment to run the recursion directly instead of waiting for input:
-        // run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0);
-        main_loop(&dict);
+        if args.len() > 1 {
+            match args[1].as_str() {
+                // Execute the recursive search function for maxium values
+                "run" => { run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0) },
+                _ => println!("\nUnrecognised argument."),
+            }
+        } else {
+            main_loop(&dict);
+        }
     }
 }
