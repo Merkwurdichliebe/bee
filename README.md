@@ -1,6 +1,8 @@
 # bee
 A simple [NYT Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) solver written in Rust.
 
+![Bee Screenshot](https://github.com/Merkwurdichliebe/bee/blob/master/bee.jpg?raw=true)
+
 ## Usage
 
 Enter a 7-letter sequence to display all possible words and pangrams.
