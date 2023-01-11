@@ -1,5 +1,5 @@
 # bee
-First steps in Rust with a simple Spelling Bee solver.
+A simple [NYT Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) solver written in Rust.
 
 ## Usage
 
