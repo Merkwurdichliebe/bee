@@ -5,7 +5,7 @@ A simple [NYT Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) solver
 
 ## Usage
 
-Enter a 7-letter sequence (e.g. aeinrst) to display all possible words and pangrams, with the first character ('a' in this example) being the center letter of the puzzle.
+Enter a 7-letter sequence (e.g. `aeinrst`) to display all possible words and pangrams, with the first character (`a` in this example) being the center letter of the puzzle.
 
 ## Finding maximum values
 
