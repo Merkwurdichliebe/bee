@@ -11,7 +11,7 @@ At the prompt, enter a 7-letter sequence (e.g. `aeinrst`) to display all possibl
 
 Instead of a 7-letter string, type `maximum` to find the letter combination with gives the maximum values for words, pangrams, score and ratio of pangrams to number of words.
 
-The code uses a recursive function to check all 3,315,312,000 possible letter permutations. With the Wordnik dictionary, the process (single-threaded) takes approximately three hours to complete on a 4GHz i7 iMac.
+The code uses a recursive function to check all 3,315,312,000 possible letter permutations. With the Wordnik dictionary, the process (single-threaded) takes approximately 2.5 hours to complete on a 4GHz i7 iMac.
 
 ## Required English dictionary
 
