@@ -17,7 +17,14 @@ use chrono::prelude::*; // for printing current time
 fn file_to_vector(filename: String) -> Result<Vec<String>> {
     let file_in = fs::File::open(filename)?;
     let file_reader = BufReader::new(file_in);
-    Ok(file_reader.lines().filter_map(Result::ok).collect())
+    let mut dict: Vec<String> = file_reader.lines().filter_map(Result::ok).collect();
+
+    // Filter unnecessary 3-letter words
+    let length = dict.len();
+    dict.retain(|w| w.len() > 3);
+    println!("\nLoaded dictionary with {} words. Removed 3-letter words -> down to {} words.", length, dict.len());
+
+    Ok(dict)
 }
 
 
@@ -255,7 +262,10 @@ fn main() {
         if args.len() > 1 {
             match args[1].as_str() {
                 // Execute the recursive search function for maxium values
-                "run" => { run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0) },
+                "run" => {
+                    println!("");
+                    run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0);
+                },
                 _ => println!("\nUnrecognised argument."),
             }
         } else {
