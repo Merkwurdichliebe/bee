@@ -5,11 +5,11 @@ A simple [NYT Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) solver
 
 ## Usage
 
-Enter a 7-letter sequence (e.g. `aeinrst`) to display all possible words and pangrams, with the first character (`a` in this example) being the center letter of the puzzle.
+At the prompt, enter a 7-letter sequence (e.g. `aeinrst`) to display all possible words and pangrams, with the first character (`a` in this example) being the center letter of the puzzle.
 
 ## Finding maximum values
 
-Instead of a 7-letter string, type `maximum` to find the largest values for words, pangrams, score and ratio of pangrams to number of words.
+Instead of a 7-letter string, type `maximum` to find the letter combination with gives the maximum values for words, pangrams, score and ratio of pangrams to number of words.
 
 The code uses a recursive function to check all 3,315,312,000 possible letter permutations. With the Wordnik dictionary, the process (single-threaded) takes approximately three hours to complete on a 4GHz i7 iMac.
 
