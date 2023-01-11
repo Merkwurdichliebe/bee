@@ -220,12 +220,13 @@ fn main_loop(dict: &Vec<String>) {
         // Center letter should be the first element in the string
         let target = get_target_letters();
 
+        // If the string is 'maximum', call the maximum searching function
+        // Otherwise, display the solution
         if target == "maximum" {
             run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0);
+        } else {
+            print_solution(solution(dict, &target), &target);
         }
-
-        let solution = solution(dict, &target);
-        print_solution(solution, &target);
     }
 }
 
