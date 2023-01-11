@@ -86,6 +86,7 @@ fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32
     // We need to use lifetimes in the signature because we are returning
     // a Vector of references to the Strings in the borrowed dict Vector
 
+    // The center letter is the first character of the string
     let center_letter = target.chars().nth(0).unwrap();
     let mut solution: Vec<&String> = Vec::new();
     let mut pangrams = 0;
@@ -98,11 +99,15 @@ fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32
         if word.len() > 3 && word.contains(center_letter) {
             if is_valid_word(word, target) {
                 solution.push(word);
+
+                // We apply the standard NYT scoring here...
                 if word.len() == 4 {
                     score += 1;
                 } else {
                     score += word.len() as i32;
                 }
+
+                // ...including bonus pangrams score
                 if is_pangram(word, target) {
                     pangrams += 1;
                     score += 7;
