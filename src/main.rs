@@ -140,7 +140,11 @@ fn print_solution(solution: (Vec<&String>, i32, i32), target: &String) {
     println!("");
     for word in &words {
         if is_pangram(&word, &target) {
-            print!("{}", format!("{word} ").red().bold());
+            if word.len() == 7 { // Perfect pangram
+                print!("{}", format!("{word} ").green().bold());
+            } else {             // Regular pangram
+                print!("{}", format!("{word} ").red().bold());
+            }
         } else {
             print!("{}", format!("{word} "));
         }
