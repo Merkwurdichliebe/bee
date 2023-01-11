@@ -1,5 +1,5 @@
 # bee
-A simple [NYT Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) solver written as an exercice in Rust.
+A simple [NYT Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) solver written as an exercice in recursion in Rust.
 
 ![Bee Screenshot](https://github.com/Merkwurdichliebe/bee/blob/master/bee.jpg?raw=true)
 
