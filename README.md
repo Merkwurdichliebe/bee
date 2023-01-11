@@ -1,7 +1,9 @@
 # bee
-A simple [NYT Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) solver written in Rust.
+A simple [NYT Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) solver written as an exercice in Rust.
 
 ![Bee Screenshot](https://github.com/Merkwurdichliebe/bee/blob/master/bee.jpg?raw=true)
+
+Only after finishing this brute-force approach did I stumble into [this](http://varianceexplained.org/r/honeycomb-puzzle/).
 
 ## Usage
 
