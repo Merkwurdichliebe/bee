@@ -135,30 +135,73 @@ fn print_solution(solution: (Vec<&String>, i32, i32), target: &String) {
 /// Recursive function that prints the maximum word count and pangram value
 /// for all valid letter combinations.
 /// Runs when the user inputs 'maximum'.
-fn run(target: &mut String, dict: &Vec<String>, max_pangrams: &mut i32, max_words: &mut i32, max_score: &mut i32) {
+/// We need to pass all these references in order to track maximum values.
+fn run(
+    target: &mut String,
+    dict: &Vec<String>,
+    max_pangrams: &mut i32,
+    max_words: &mut i32,
+    max_score: &mut i32,
+    max_ratio: &mut i32
+) {
+
+    // Depth of recursion is equal to the length of the string
+    let depth = target.len();
+
+    // We run through all the letters of the alphabet
     for a in 'a'..='z' {
-        if target.len() == 2 {
-            println!("Processing: {}{}{}....", target.chars().nth(0).unwrap(), target.chars().nth(1).unwrap(), a);
-        }
-        if !target.contains(a) {
+
+        // Append the letter to the string in one of three cases:
+        // - The string is empty
+        // - It's the second letter and it's different than the first (central) letter
+        // - It's any other letter not already found in the string and its value
+        //   is larger than the previous letter in the string
+        // This avoids testing equivalent permutations e.g. abcdefg and acdefgb
+        if depth == 0 ||
+            depth == 1 && !target.contains(a) ||
+            (depth > 1 && !target.contains(a) && target.chars().nth(depth-1).unwrap() < a) {
+
+            // Print some idea of the function's progress
+            if depth > 2 {
+                print!("\r{}{}{}....", target.chars().nth(0).unwrap(), target.chars().nth(1).unwrap(), target.chars().nth(2).unwrap());
+            }
+            
+            // Add the letter to the string
             target.push(a);
-            if target.len() == 7 {
+
+            // We are looking for a 7-letter string so we stop at 6
+            if depth == 6 {
+
+                // Get the solution for the string
                 let (solution, pangrams, score) = solution(dict, &target);
+                let words = solution.len() as i32;
+                let ratio = if words > 0 { pangrams * 100 / words} else { 0 };
+
+                // Print new maximums if it is the case
                 if pangrams > *max_pangrams {
-                    println!("{} -- Pangrams: {} {:>5} {:>5} {:>3}", Local::now(), target, solution.len(), score, pangrams);
+                    println!("\r{:<36} -- Pangrams:  {} {:>5} {:>3} ({:>2}) {:>5}", Local::now(), target, words, pangrams, ratio, score);
                     *max_pangrams = pangrams;
                 }
-                if solution.len() > *max_words as usize {
-                    println!("{} -- Words:    {} {:>5} {:>5} {:>3}", Local::now(), target, solution.len(), score, pangrams);
-                    *max_words = solution.len() as i32;
+                if words > *max_words {
+                    println!("\r{:<36} -- Words:     {} {:>5} {:>3} ({:>2}) {:>5}", Local::now(), target, words, pangrams, ratio, score);
+                    *max_words = words;
+                }
+                if ratio > *max_ratio {
+                    println!("\r{:<36} -- Ratio:     {} {:>5} {:>3} ({:>2}) {:>5}", Local::now(), target, words, pangrams, ratio, score);
+                    *max_ratio = ratio;
                 }
                 if score > *max_score {
-                    println!("{} -- Score:    {} {:>5} {:>5} {:>3}", Local::now(), target, solution.len(), score, pangrams);
+                    println!("\r{:<36} -- Score:     {} {:>5} {:>3} ({:>2}) {:>5}", Local::now(), target, words, pangrams, ratio, score);
                     *max_score = score;
                 }
+
             } else {
-                run(target, dict, max_pangrams, max_words, max_score);
+                // If the string is shorter than 7 letters, recurse
+                run(target, dict, max_pangrams, max_words, max_score, max_ratio);
             }
+
+            // Remove the last letter of the string
+            // before continuing to the next iteration of the a..z for loop
             target.pop();
         }
     }
@@ -173,7 +216,7 @@ fn main_loop(dict: &Vec<String>) {
         let target = get_target_letters();
 
         if target == "maximum" {
-            run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0);
+            run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0);
         }
 
         let solution = solution(dict, &target);
@@ -186,7 +229,6 @@ fn main() {
     // Read the word dictionary from the file
     let dict = match file_to_vector("./wordlist.txt".to_string()) {
         Ok(dict) => dict,
-        // Err(why) => panic!("Problem opening the dictionary file (is \"wordlist.txt\" in the current directory?) {:?}", why),
         Err(_) => Vec::<String>::new()
     };
 
@@ -194,6 +236,8 @@ fn main() {
     if dict.is_empty() {
         println!("\nProblem opening the dictionary file (is \"wordlist.txt\" in the current directory?)");
     } else {
+        // Uncomment to run the recursion directly instead of waiting for input:
+        // run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0);
         main_loop(&dict);
     }
 }
