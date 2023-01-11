@@ -80,7 +80,7 @@ fn is_pangram(word: &String, target: &String) -> bool {
 
 
 /// Return a Vector containing references to all the words in the dictionary
-/// which can be created with the target string
+/// that can be created with the target string
 fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32, i32) {
 
     // We need to use lifetimes in the signature because we are returning
@@ -120,7 +120,7 @@ fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32
 }
 
 
-/// Pretty print the solution with pangrams in yellow
+/// Pretty print the solution with highlighted pangrams
 /// and some statistics
 fn print_solution(solution: (Vec<&String>, i32, i32), target: &String) {
     let (words, pangrams, score) = solution;
