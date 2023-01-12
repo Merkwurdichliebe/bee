@@ -12,9 +12,11 @@ use std::io::Result;    // for reading line Result
 use colored::*;         // for colored terminal output
 use chrono::prelude::*; // for printing current time
 
+const DICT_FILENAME: &str = "wordlist.txt";
+
 
 /// Read a file into an optional Vector of individual lines
-fn file_to_vector(filename: String) -> Result<Vec<String>> {
+fn file_to_vector(filename: &String) -> Result<Vec<String>> {
     let file_in = fs::File::open(filename)?;
     let file_reader = BufReader::new(file_in);
     let mut dict: Vec<String> = file_reader.lines().filter_map(Result::ok).collect();
@@ -26,7 +28,9 @@ fn file_to_vector(filename: String) -> Result<Vec<String>> {
     // Uncomment the next line to exclude words containing the letter S
     // dict.retain(|w| !w.contains('s'));
 
-    println!("\nLoaded dictionary with {} words, filtered down to {} words.", length, dict.len());
+    // Print dictionary information
+    println!("\nLoaded dictionary from: {}", filename);
+    println!("Dictionary has {} words, filtered down to {} words.", length, dict.len());
 
     Ok(dict)
 }
@@ -251,8 +255,18 @@ fn main_loop(dict: &Vec<String>) {
 
 
 fn main() {
-    // Read the word dictionary from the file
-    let dict = match file_to_vector("./wordlist.txt".to_string()) {
+    // Build the full path to the wordlist.txt file,
+    // expected to be in the executable directory
+    let mut dict_path = env::current_exe().expect("Executable not found.");
+    dict_path.pop();
+    dict_path.push(DICT_FILENAME);
+
+    // dict_path is a PathBuf type
+    // Convert it to a string
+    let dict_path_str = dict_path.into_os_string().into_string().expect("Couldn't convert dictionary path to string.");
+
+    // Load the dictionary
+    let dict = match file_to_vector(&dict_path_str) {
         Ok(dict) => dict,
         Err(_) => Vec::<String>::new()
     };
