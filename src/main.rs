@@ -224,7 +224,7 @@ fn run(
                     println!("\r{:<36} -- Words:     {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
                     *max_words = words;
                 }
-                if ratio > *max_ratio {
+                if ratio > *max_ratio && words > 9 { // 50% ratio with 2 words isn't fun
                     println!("\r{:<36} -- Ratio:     {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
                     *max_ratio = ratio;
                 }
