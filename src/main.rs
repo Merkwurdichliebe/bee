@@ -102,7 +102,7 @@ fn is_pangram(word: &String, target: &String) -> bool {
 
 /// Return a Vector containing references to all the words in the dictionary
 /// that can be created with the target string
-fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32, i32) {
+fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32, i32, i32) {
 
     // We need to use lifetimes in the signature because we are returning
     // a Vector of references to the Strings in the borrowed dict Vector
@@ -112,6 +112,7 @@ fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32
     let mut solution: Vec<&String> = Vec::new();
     let mut pangrams = 0;
     let mut score = 0;
+    let mut perfect = 0;
 
     // Everything is a reference here,
     // including the words pushed onto the solution Vector
@@ -131,18 +132,22 @@ fn solution<'a>(dict: &'a Vec<String>, target: &String) -> (Vec<&'a String>, i32
             if is_pangram(word, target) {
                 pangrams += 1;
                 score += 7;
+
+                if word.len() == 7 {
+                    perfect += 1;
+                }
             }
         }
     }
 
-    (solution, pangrams, score)
+    (solution, pangrams, perfect, score)
 }
 
 
 /// Pretty print the solution with highlighted pangrams
 /// and some statistics
-fn print_solution(solution: (Vec<&String>, i32, i32), target: &String) {
-    let (words, pangrams, score) = solution;
+fn print_solution(solution: (Vec<&String>, i32, i32, i32), target: &String) {
+    let (words, pangrams, perfect, score) = solution;
     println!("");
     for word in &words {
         if is_pangram(&word, &target) {
@@ -156,7 +161,7 @@ fn print_solution(solution: (Vec<&String>, i32, i32), target: &String) {
         }
     }
 
-    println!("\n\nWords: {} Score: {} Pangrams: {}", words.len(), score, pangrams);
+    println!("\n\nWords: {} Score: {} Pangrams: {} Perfect: {}", words.len(), score, pangrams, perfect);
 }
 
 
@@ -168,6 +173,7 @@ fn run(
     target: &mut String,
     dict: &Vec<String>,
     max_pangrams: &mut i32,
+    max_perfect: &mut i32,
     max_words: &mut i32,
     max_score: &mut i32,
     max_ratio: &mut i32
@@ -201,31 +207,35 @@ fn run(
             if depth == 6 {
 
                 // Get the solution for the string
-                let (solution, pangrams, score) = solution(dict, &target);
+                let (solution, pangrams, perfect, score) = solution(dict, &target);
                 let words = solution.len() as i32;
                 let ratio = if words > 0 { pangrams * 100 / words } else { 0 };
 
                 // Print new maximums if it is the case
                 if pangrams > *max_pangrams {
-                    println!("\r{:<36} -- Pangrams:  {} {:>5} {:>3} ({:>2}) {:>5}", Local::now(), target, words, pangrams, ratio, score);
+                    println!("\r{:<36} -- Pangrams:  {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
                     *max_pangrams = pangrams;
                 }
+                if perfect > *max_perfect {
+                    println!("\r{:<36} -- Perfect:   {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
+                    *max_perfect = perfect;
+                }
                 if words > *max_words {
-                    println!("\r{:<36} -- Words:     {} {:>5} {:>3} ({:>2}) {:>5}", Local::now(), target, words, pangrams, ratio, score);
+                    println!("\r{:<36} -- Words:     {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
                     *max_words = words;
                 }
                 if ratio > *max_ratio {
-                    println!("\r{:<36} -- Ratio:     {} {:>5} {:>3} ({:>2}) {:>5}", Local::now(), target, words, pangrams, ratio, score);
+                    println!("\r{:<36} -- Ratio:     {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
                     *max_ratio = ratio;
                 }
                 if score > *max_score {
-                    println!("\r{:<36} -- Score:     {} {:>5} {:>3} ({:>2}) {:>5}", Local::now(), target, words, pangrams, ratio, score);
+                    println!("\r{:<36} -- Score:     {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
                     *max_score = score;
                 }
 
             } else {
                 // If the string is shorter than 7 letters, recurse
-                run(target, dict, max_pangrams, max_words, max_score, max_ratio);
+                run(target, dict, max_pangrams, max_perfect, max_words, max_score, max_ratio);
             }
 
             // Remove the last letter of the string
@@ -246,7 +256,7 @@ fn main_loop(dict: &Vec<String>) {
         // If the string is 'maximum', call the maximum searching function
         // Otherwise, display the solution
         if target == "maximum" {
-            run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0);
+            run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0, &mut 0);
         } else {
             print_solution(solution(dict, &target), &target);
         }
@@ -284,7 +294,7 @@ fn main() {
                 // Execute the recursive search function for maxium values
                 "run" => {
                     println!("");
-                    run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0);
+                    run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0, &mut 0);
                 },
                 _ => println!("\nUnrecognised argument."),
             }
