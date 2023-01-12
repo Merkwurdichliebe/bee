@@ -15,6 +15,30 @@ use chrono::prelude::*; // for printing current time
 const DICT_FILENAME: &str = "wordlist.txt";
 
 
+// A few example tests
+#[test]
+fn is_valid_word_test() {
+    assert!(is_valid_word("hello", "heloabc"));
+    assert!(is_valid_word("world", "worldab"));
+
+    assert!(!is_valid_word("hello", "helabcd"));
+    assert!(!is_valid_word("world", "wrldabc"));
+}
+
+#[test]
+fn is_pangram_test() {
+    assert!(is_pangram("itinerants", "retains"));
+    assert!(is_pangram("nastier", "retains"));
+    assert!(is_pangram("stainer", "retains"));
+    assert!(is_pangram("antistress", "retains"));
+
+    assert!(!is_pangram("retints", "retains"));
+    assert!(!is_pangram("insert", "retains"));
+    assert!(!is_pangram("arena", "retains"));
+    assert!(!is_pangram("eeriness", "retains"));
+}
+
+
 /// Struct that holds the maximum values obtained,
 /// to be passed around in the recursion of run()
 struct Max {
@@ -90,7 +114,7 @@ fn get_target_letters() -> String {
 /// - 4 or more characters
 /// - Composed only of letters present in the target string
 /// - Contains the central letter (first character in the string)
-fn is_valid_word(word: &String, target: &String) -> bool {
+fn is_valid_word(word: &str, target: &str) -> bool {
 
     let mut valid = true;
     let center_letter = target.chars().nth(0).unwrap();
@@ -108,7 +132,7 @@ fn is_valid_word(word: &String, target: &String) -> bool {
 
 /// Return true if the word is a pangram,
 /// i.e. if it contains all characters present in the target string
-fn is_pangram(word: &String, target: &String) -> bool {
+fn is_pangram(word: &str, target: &str) -> bool {
     let mut n = 0;
     for char in target.chars() {
         if word.contains(char) {
