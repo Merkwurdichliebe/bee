@@ -15,6 +15,30 @@ use chrono::prelude::*; // for printing current time
 const DICT_FILENAME: &str = "wordlist.txt";
 
 
+/// Struct that holds the maximum values obtained,
+/// to be passed around in the recursion of run()
+struct Max {
+    // Mutability will be inherited by the individual fields
+    pangrams: i32,
+    perfect: i32,
+    words: i32,
+    score: i32,
+    ratio: i32,
+}
+
+impl Default for Max {
+    fn default() -> Self {
+        Self {
+            pangrams: 0,
+            perfect: 0,
+            words: 0,
+            score: 0,
+            ratio: 0,
+        }
+    }
+}
+
+
 /// Read a file into an optional Vector of individual lines
 fn file_to_vector(filename: &String) -> Result<Vec<String>> {
     let file_in = fs::File::open(filename)?;
@@ -165,6 +189,18 @@ fn print_solution(solution: (Vec<&String>, i32, i32, i32), target: &String) {
 }
 
 
+/// Print a line with info about the letter combination
+/// - `max`: struct containing the maximum values associated with the letters
+/// - `reason`: string indicating the reason for the new max value (one of the 5 fields of Max)
+fn print_max(max: &Max, word: &str, reason: &ColoredString) {
+    println!("\r{:<38} -- {:<8}{:>6}{:>4}{:>4}{:>6} ({:>2}) -- {:<10}",
+        Local::now(),
+        word,
+        max.words, max.pangrams, max.perfect, max.score, max.ratio,
+        reason);
+}
+
+
 /// Recursive function that prints the maximum word count and pangram value
 /// for all valid letter combinations.
 /// Runs when the user inputs 'maximum'.
@@ -172,11 +208,7 @@ fn print_solution(solution: (Vec<&String>, i32, i32, i32), target: &String) {
 fn run(
     target: &mut String,
     dict: &Vec<String>,
-    max_pangrams: &mut i32,
-    max_perfect: &mut i32,
-    max_words: &mut i32,
-    max_score: &mut i32,
-    max_ratio: &mut i32
+    max: &mut Max
 ) {
 
     // Depth of recursion is equal to the length of the string
@@ -212,30 +244,30 @@ fn run(
                 let ratio = if words > 0 { pangrams * 100 / words } else { 0 };
 
                 // Print new maximums if it is the case
-                if pangrams > *max_pangrams {
-                    println!("\r{:<36} -- Pangrams:  {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
-                    *max_pangrams = pangrams;
+                if pangrams > max.pangrams {
+                    print_max(&max, &target, &"pangrams".red());
+                    max.pangrams = pangrams;
                 }
-                if perfect > *max_perfect {
-                    println!("\r{:<36} -- Perfect:   {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
-                    *max_perfect = perfect;
+                if perfect > max.perfect {
+                    print_max(&max, &target, &"perfect".green());
+                    max.perfect = perfect;
                 }
-                if words > *max_words {
-                    println!("\r{:<36} -- Words:     {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
-                    *max_words = words;
+                if words > max.words {
+                    print_max(&max, &target, &"words".normal());
+                    max.words = words;
                 }
-                if ratio > *max_ratio && words > 9 { // 50% ratio with 2 words isn't fun
-                    println!("\r{:<36} -- Ratio:     {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
-                    *max_ratio = ratio;
+                if ratio > max.ratio && words > 9 { // 50% ratio with 2 words isn't fun
+                print_max(&max, &target, &"ratio".yellow());
+                    max.ratio = ratio;
                 }
-                if score > *max_score {
-                    println!("\r{:<36} -- Score:     {} {:>5} {:>3} ({:>2}) {:>2} {:>5}", Local::now(), target, words, pangrams, ratio, perfect, score);
-                    *max_score = score;
+                if score > max.score {
+                    print_max(&max, &target, &"score".bright_blue());
+                    max.score = score;
                 }
 
             } else {
                 // If the string is shorter than 7 letters, recurse
-                run(target, dict, max_pangrams, max_perfect, max_words, max_score, max_ratio);
+                run(target, dict, max);
             }
 
             // Remove the last letter of the string
@@ -256,7 +288,7 @@ fn main_loop(dict: &Vec<String>) {
         // If the string is 'maximum', call the maximum searching function
         // Otherwise, display the solution
         if target == "maximum" {
-            run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0, &mut 0);
+            run(&mut String::new(), &dict, &mut Max::default());
         } else {
             print_solution(solution(dict, &target), &target);
         }
@@ -294,7 +326,7 @@ fn main() {
                 // Execute the recursive search function for maxium values
                 "run" => {
                     println!("");
-                    run(&mut String::new(), &dict, &mut 0, &mut 0, &mut 0, &mut 0, &mut 0);
+                    run(&mut String::new(), &dict, &mut Max::default());
                 },
                 _ => println!("\nUnrecognised argument."),
             }
